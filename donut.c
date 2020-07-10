@@ -23,6 +23,7 @@ void display_buffer(struct Canvas canvas) {
 }
 
 void iterate_buffer(struct Canvas canvas, float * z, float A, float B) {
+  const float outer_size = canvas.width / 40.0;
   const size_t buffer_size = canvas.height * canvas.width;
   memset(canvas.buffer, ' ', buffer_size);
   memset(z, 0, buffer_size * sizeof(float));
@@ -33,7 +34,7 @@ void iterate_buffer(struct Canvas canvas, float * z, float A, float B) {
       float sin_A = sin(A);
       float sin_phi = sin(phi);
       float cos_A = cos(A);
-      float h = cos_phi + 2;
+      float h = cos_phi + outer_size;
       float D = 1 / (sin_theta * h * sin_A + sin_phi * cos_A + 5);
       float cos_theta = cos(theta);
       float cos_B = cos(B);
@@ -54,8 +55,8 @@ void iterate_buffer(struct Canvas canvas, float * z, float A, float B) {
 int main() {
   float A = 0;
   float B = 0;
-  const size_t width = 80;
-  const size_t height = 22;
+  const size_t width = 120;
+  const size_t height = 35;
   const size_t buffer_size = height * width;
   struct Canvas canvas;
   canvas.width = width;
