@@ -8,34 +8,34 @@ int main() {
   const size_t buffer_size = 1760;
   float z[buffer_size];
   char b[buffer_size];
-  const float j_step = 0.07;
-  const float i_step = 0.02;
+  const float phi_step = 0.07;
+  const float theta_step = 0.02;
   const int width = 80;
   const int height = 22;
   const char * shade_chars = ".,-~:;=!*#$@";
-  const char * newline = '\n';
+  const char newline = '\n';
   float TWO_PI = 6.28;
   printf("\x1b[2J");
   for (;;) {
     memset(b, ' ', buffer_size);
     memset(z, 0, buffer_size * sizeof(float));
-    for (float j = 0; j < TWO_PI; j += j_step) {
-      for (float i = 0; i < TWO_PI; i += i_step) {
-        float c = sin(i);
-        float d = cos(j);
-        float e = sin(A);
-        float f = sin(j);
-        float g = cos(A);
-        float h = d + 2;
-        float D = 1 / (c * h * e + f * g + 5);
-        float l = cos(i);
-        float m = cos(B);
-        float n = sin(B);
-        float t = c * h * g - f * e;
-        int x = (width / 2) + 30 * D * (l * h * m - t * n);
-        int y = (height / 2 - 1) + 15 * D * (l * h * n + t * m); 
+    for (float phi = 0; phi < TWO_PI; phi += phi_step) {
+      for (float theta = 0; theta < TWO_PI; theta += theta_step) {
+        float sin_theta = sin(theta);
+        float cos_phi = cos(phi);
+        float sin_A = sin(A);
+        float sin_phi = sin(phi);
+        float cos_A = cos(A);
+        float h = cos_phi + 2;
+        float D = 1 / (sin_theta * h * sin_A + sin_phi * cos_A + 5);
+        float cos_theta = cos(theta);
+        float cos_B = cos(B);
+        float sin_B = sin(B);
+        float t = sin_theta * h * cos_A - sin_phi * sin_A;
+        int x = (width / 2) + 30 * D * (cos_theta * h * cos_B - t * sin_B);
+        int y = (height / 2 - 1) + 15 * D * (cos_theta * h * sin_B + t * cos_B); 
         int o = x + width * y;
-        int N = 8 * ((f * e - c * d * g) * m - c * d * e - f * g - l * d * n);
+        int N = 8 * ((sin_phi * sin_A - sin_theta * cos_phi * cos_A) * cos_B - sin_theta * cos_phi * sin_A - sin_phi * cos_A - cos_theta * cos_phi * sin_B);
         if (height > y && y > 0 && x > 0 && width > x && D > z[o]) {
           z[o] = D;
           b[o] = shade_chars[N > 0 ? N : 0];
