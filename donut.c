@@ -9,17 +9,22 @@ const char * shade_chars = ".,-~:;=!*#$@";
 
 float TWO_PI = 6.28;
 
+struct Canvas {
+  char * buffer;
+  size_t height;
+  size_t width;
+};
 
-void display_buffer(char * buffer, size_t height, size_t width) {
-  const size_t buffer_size = height * width;
+void display_buffer(struct Canvas canvas) {
+  const size_t buffer_size = canvas.height * canvas.width;
   printf("\x1b[H");
   for (int k = 0; buffer_size >= k; k++)
-    putchar(k % width ? buffer[k] : newline);
+    putchar(k % canvas.width ? canvas.buffer[k] : newline);
 }
 
-void iterate_buffer(char * buffer, float * z, size_t height, size_t width, float A, float B) {
-  const size_t buffer_size = height * width;
-  memset(buffer, ' ', buffer_size);
+void iterate_buffer(struct Canvas canvas, float * z, float A, float B) {
+  const size_t buffer_size = canvas.height * canvas.width;
+  memset(canvas.buffer, ' ', buffer_size);
   memset(z, 0, buffer_size * sizeof(float));
   for (float phi = 0; phi < TWO_PI; phi += phi_step) {
     for (float theta = 0; theta < TWO_PI; theta += theta_step) {
@@ -34,13 +39,13 @@ void iterate_buffer(char * buffer, float * z, size_t height, size_t width, float
       float cos_B = cos(B);
       float sin_B = sin(B);
       float t = sin_theta * h * cos_A - sin_phi * sin_A;
-      int x = (width / 2) + 30 * D * (cos_theta * h * cos_B - t * sin_B);
-      int y = (height / 2 - 1) + 15 * D * (cos_theta * h * sin_B + t * cos_B); 
-      int o = x + width * y;
+      int x = (canvas.width / 2) + 30 * D * (cos_theta * h * cos_B - t * sin_B);
+      int y = (canvas.height / 2 - 1) + 15 * D * (cos_theta * h * sin_B + t * cos_B); 
+      int o = x + canvas.width * y;
       int N = 8 * ((sin_phi * sin_A - sin_theta * cos_phi * cos_A) * cos_B - sin_theta * cos_phi * sin_A - sin_phi * cos_A - cos_theta * cos_phi * sin_B);
-      if (height > y && y > 0 && x > 0 && width > x && D > z[o]) {
+      if (canvas.height > y && y > 0 && x > 0 && canvas.width > x && D > z[o]) {
         z[o] = D;
-        buffer[o] = shade_chars[N > 0 ? N : 0];
+        canvas.buffer[o] = shade_chars[N > 0 ? N : 0];
       }
     }
   }
@@ -52,13 +57,16 @@ int main() {
   const size_t width = 80;
   const size_t height = 22;
   const size_t buffer_size = height * width;
+  struct Canvas canvas;
+  canvas.width = width;
+  canvas.height = height;
   float z[buffer_size];
   char buffer[buffer_size];
-
+  canvas.buffer = buffer;
   printf("\x1b[2J");
   for (;;) {
-    iterate_buffer(buffer, z, height, width, A, B);
-    display_buffer(buffer, height, width);
+    iterate_buffer(canvas, z, A, B);
+    display_buffer(canvas);
     A += 0.04;
     B += 0.02;
   }
