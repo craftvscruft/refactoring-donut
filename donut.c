@@ -14,12 +14,13 @@ int main() {
   const int height = 22;
   const char * shade_chars = ".,-~:;=!*#$@";
   const char * newline = '\n';
+  float TWO_PI = 6.28;
   printf("\x1b[2J");
   for (;;) {
     memset(b, ' ', buffer_size);
     memset(z, 0, buffer_size * sizeof(float));
-    for (float j = 0; 6.28 > j; j += j_step) {
-      for (float i = 0; 6.28 > i; i += i_step) {
+    for (float j = 0; j < TWO_PI; j += j_step) {
+      for (float i = 0; i < TWO_PI; i += i_step) {
         float c = sin(i);
         float d = cos(j);
         float e = sin(A);
