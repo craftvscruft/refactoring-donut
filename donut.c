@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include "logging.h"
 
 const char newline = '\n';
 const float phi_step = 0.07;
@@ -41,7 +42,7 @@ void iterate_buffer(struct Canvas canvas, float * z, float A, float B) {
       float sin_B = sin(B);
       float t = sin_theta * h * cos_A - sin_phi * sin_A;
       int x = (canvas.width / 2) + 30 * D * (cos_theta * h * cos_B - t * sin_B);
-      int y = (canvas.height / 2 - 1) + 15 * D * (cos_theta * h * sin_B + t * cos_B); 
+      int y = (canvas.height / 2 + 1) + 15 * D * (cos_theta * h * sin_B + t * cos_B);
       int o = x + canvas.width * y;
       int N = 8 * ((sin_phi * sin_A - sin_theta * cos_phi * cos_A) * cos_B - sin_theta * cos_phi * sin_A - sin_phi * cos_A - cos_theta * cos_phi * sin_B);
       if (canvas.height > y && y > 0 && x > 0 && canvas.width > x && D > z[o]) {
@@ -53,10 +54,11 @@ void iterate_buffer(struct Canvas canvas, float * z, float A, float B) {
 }
 
 int main() {
+  int step = 0;
   float A = 0;
   float B = 0;
-  const size_t width = 120;
-  const size_t height = 35;
+  const size_t width = 80;
+  const size_t height = 22;
   const size_t buffer_size = height * width;
   struct Canvas canvas;
   canvas.width = width;
@@ -70,5 +72,6 @@ int main() {
     display_buffer(canvas);
     A += 0.04;
     B += 0.02;
+    log_step(step++, canvas.buffer, buffer_size, width);
   }
 }
