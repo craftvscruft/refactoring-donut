@@ -12,9 +12,5 @@ gcc donut.c logging.c -o donut -lm && ./donut
 ## Test
 
 ```
-DONUT_STEP_LOG_FILE=test/data/steps-tmp.txt ./donut
-
-# Control C out of this
-
-diff test/data/steps-golden.txt test/data/steps-tmp.txt
+./test.sh
 ```
